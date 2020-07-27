@@ -54,6 +54,9 @@ def handle_arguments():
     parser.add_argument('outdir', type=str, 
         help='The working directory. ')
 
+    parser.add_argument('--out-name', type=str, default='Stat.dat', 
+        help='The output filename. ')
+
     parser.add_argument('--max-count', type=int, default=0, 
         help='Set the maximum number of flows to process. Debug use. Set 0 to disable.')
 
@@ -67,9 +70,9 @@ def main():
     args = handle_arguments()
 
     Filesystem.test_directory(args.outdir)
-
+    # import ipdb; ipdb.set_trace()
     # Find all the flow files.
-    flows = find_files( '%s/**/%s' % ( args.indir, args.pattern ) )
+    flows = find_files( '%s/%s' % ( args.indir, args.pattern ) )
 
     nFiles = deteremin_max_number( len(flows), args.max_count )
 
@@ -77,7 +80,7 @@ def main():
 
     imgPrefix = os.path.join( args.indir, args.imageprefix )
 
-    for i in range(len(flows)):
+    for i in range(nFiles):
         flowFn = flows[i]
         # print(flowFn)
         errorStat = process_flow( flowFn, imgPrefix )
@@ -85,9 +88,15 @@ def main():
 
         errorStats.append( errorStat )
 
-    stat = np.array( errorStat, dtype=np.float32 )
+        if ( i % 100 == 0 ):
+            print('%d/%d processed. ' % (i+1, nFiles))
+    
+    if ( nFiles != len(flows) ):
+        print('args.max_count = %d\n' % (args.max_count))
 
-    outFn = os.path.join( args.outdir, 'Stat.dat' )
+    stat = np.array( errorStats, dtype=np.float32 )
+
+    outFn = os.path.join( args.outdir, args.out_name )
     np.savetxt( outFn, stat, fmt='%+.12e' )       
 
     return 0
