@@ -75,10 +75,12 @@ def main():
 
     errorStats = []
 
+    imgPrefix = os.path.join( args.indir, args.imageprefix )
+
     for i in range(len(flows)):
         flowFn = flows[i]
         # print(flowFn)
-        errorStat = process_flow( flowFn, args.imageprefix )
+        errorStat = process_flow( flowFn, imgPrefix )
         # print( 'Min %f, max %f, mean %f. ' % ( errorStat[0], errorStat[1], errorStat[2] ) )
 
         errorStats.append( errorStat )
