@@ -1,0 +1,8 @@
+SampleData/
+SampleData2/
+*.pyc
+*.png
+*.jpg
+*.npy
+*.dat
+*.code-workspace
